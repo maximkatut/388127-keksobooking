@@ -80,7 +80,7 @@ var randomLocationY = function () {
 };
 
 var randomType = function () {
-    var randomTypeX = randomNumbers(0, Object.keys(TYPES).length - 1);
+  var randomTypeX = randomNumbers(0, Object.keys(TYPES).length - 1);
   return Object.keys(TYPES)[randomTypeX];
 };
 
