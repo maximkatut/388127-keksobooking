@@ -1,3 +1,5 @@
+'use strict';
+
 var places = [];
 var AVATARS = [
   'img/avatars/user01.png',
@@ -140,7 +142,7 @@ var randomPlace = function () {
       x: x,
       y: y
     }
-  }
+  };
 };
 
 var initPlaces = function () {
@@ -191,6 +193,7 @@ var mapCardChooseType = function () {
     case 'bungalo':
       return 'Бунгало';
   }
+  1===1;
 };
 
 var mapCardCreatePhotos = function () {
