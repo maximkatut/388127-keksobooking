@@ -45,6 +45,11 @@ var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
+var GAP_X = 25;
+var GAP_Y = 70;
+var IMG_WIDTH = 40;
+var IMG_HEIGHT = 40;
+
 var randomNumbers = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -78,7 +83,6 @@ var randomLocationX = function() {
 var randomLocationY = function() {
   return randomNumbers(150, 500).round(-1);
 }
-
 
 var randomType = function() {
   var randomTypeX = randomNumbers(0, TYPES.length - 1);
@@ -152,10 +156,6 @@ var initPlaces = function() {
   }
 }
 
-var GAP_X = 25;
-var GAP_Y = 70;
-var IMG_WIDTH = 40;
-var IMG_HEIGHT = 40;
 var mapPins = document.querySelector('.map__pins');
 
 var renderPlaces = function() {
