@@ -21,12 +21,12 @@ var TITLES = [
   'Уютное бунгало далеко от моря',
   'Неуютное бунгало по колено в воде'
 ];
-var TYPES = [
-  'palace',
-  'flat',
-  'house',
-  'bungalo'
-];
+var TYPES = {
+  flat: 'Квартира',
+  bungalo: 'Бунгало',
+  house: 'Дом',
+  palace: 'Палац'
+};
 var CHECKINS = [
   '12:00',
   '13:00',
@@ -80,8 +80,8 @@ var randomLocationY = function () {
 };
 
 var randomType = function () {
-  var randomTypeX = randomNumbers(0, TYPES.length - 1);
-  return TYPES[randomTypeX];
+    var randomTypeX = randomNumbers(0, Object.keys(TYPES).length - 1);
+  return Object.keys(TYPES)[randomTypeX];
 };
 
 var randomCheckin = function () {
@@ -183,17 +183,7 @@ var mapCardPhotos = mapCardTemplate.querySelector('.popup__photos');
 var mapCardPhoto = mapCardTemplate.querySelector('.popup__photo');
 
 var mapCardChooseType = function () {
-  switch (places[0].offer.type) {
-    case 'palace':
-      return 'Палац';
-    case 'flat':
-      return 'Квартира';
-    case 'house':
-      return 'Дом';
-    case 'bungalo':
-      return 'Бунгало';
-  }
-  1===1;
+  return TYPES[places[0].offer.type];
 };
 
 var mapCardCreatePhotos = function () {
