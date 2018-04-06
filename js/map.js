@@ -29,7 +29,7 @@ var CHECKINS = [
   '12:00',
   '13:00',
   '14:00'
-]
+];
 var CHECKOUTS = CHECKINS;
 var FEATURES = [
   'wifi',
@@ -49,6 +49,13 @@ var randomNumbers = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+Number.prototype.round = function (decimals) {
+  if (typeof decimals === 'undefined') {
+    decimals = 0;
+  }
+  return Math.round(this * Math.pow(10, decimals)) / Math.pow(10, decimals);
+};
+
 var avatarsCopy = AVATARS.slice();
 var titlesCopy = TITLES.slice();
 
@@ -65,26 +72,26 @@ var randomTitle = function() {
 }
 
 var randomLocationX = function() {
-  return randomNumbers(300, 900);
+  return randomNumbers(300, 900).round(-1);
 }
 
 var randomLocationY = function() {
-  return randomNumbers(150, 500);
+  return randomNumbers(150, 500).round(-1);
 }
 
 
 var randomType = function() {
-  var randomTypeX = randomNumbers(0, TYPES.length);
+  var randomTypeX = randomNumbers(0, TYPES.length - 1);
   return TYPES[randomTypeX];
 }
 
 var randomCheckin = function() {
-  var randomCheckinX = randomNumbers(0, CHECKINS.length);
+  var randomCheckinX = randomNumbers(0, CHECKINS.length - 1);
   return CHECKINS[randomCheckinX];
 }
 
 var randomCheckout = function() {
-  var randomCheckoutX = randomNumbers(0, CHECKOUTS.length);
+  var randomCheckoutX = randomNumbers(0, CHECKOUTS.length - 1);
   return CHECKOUTS[randomCheckoutX];
 }
 
@@ -122,14 +129,14 @@ var randomPlace = function() {
     offer: {
       title: randomTitle(),
       address: x + ', ' + y,
-      price: randomNumbers(1000, 1000000),
+      price: randomNumbers(1000, 1000000).round(-2),
       type: randomType(),
       rooms: randomNumbers(1, 5),
-      guests: randomNumbers(1, 10),
+      guests: randomNumbers(1, 6),
       checkin: randomCheckin(),
       checkout: randomCheckout(),
       features: randomFeatures(),
-      description: '',
+      description: 'Здесь должен быть какой-то description',
       photos: randomPhotos()
     },
     location: {
@@ -186,7 +193,39 @@ var mapCardTime = mapCardTemplate.querySelector('.popup__text--time');
 var mapCardFeatures = mapCardTemplate.querySelector('.popup__features');
 var mapCardDescription = mapCardTemplate.querySelector('.popup__description');
 var mapCardPhotos = mapCardTemplate.querySelector('.popup__photos');
+var mapCardPhoto = mapCardTemplate.querySelector('.popup__photo');
 var mapCardAvatar = mapCardTemplate.querySelector('.popup__avatar');
+
+var mapCardChooseType = function() {
+  switch (places[0].offer.type) {
+    case 'palace':
+      return 'Палац';
+    case 'flat':
+      return 'Квартира';
+    case 'house':
+      return 'Дом';
+    case 'bungalo':
+      return 'Бунгало';
+  }
+}
+
+var mapCardCreatePhotos = function() {
+  for (var i = 0; i < 3; i++) {
+    var mapCardPhotoX = mapCardPhoto.cloneNode(true);
+    mapCardPhotos.appendChild(mapCardPhotoX);
+    mapCardPhotoX.src = places[0].offer.photos[i];
+  }
+  mapCardPhoto.parentNode.removeChild(mapCardPhoto);
+}
+
+var mapCardFeaturesCycle = function() {
+  var mapCardFeaturesString = '';
+  for (var i = 0; i < places[0].offer.features.length; i++) {
+    mapCardFeaturesString += places[0].offer.features[i];
+    mapCardFeaturesString += (i < places[0].offer.features.length - 1) ? ', ' : '';
+  }
+  return mapCardFeaturesString;
+}
 
 var renderCard = function() {
   var cardElement = mapCardTemplate.cloneNode(true);
@@ -194,8 +233,17 @@ var renderCard = function() {
 }
 
 var initCard = function() {
-  renderCard();
   mapCardTitle.textContent = places[0].offer.title;
+  mapCardAddress.textContent = places[0].offer.address;
+  mapCardPrice.textContent = places[0].offer.price + '₽/ночь';
+  mapCardType.textContent = mapCardChooseType();
+  mapCardRoomGuests.textContent = places[0].offer.rooms + ' комнат для ' + places[0].offer.guests + ' гостей';
+  mapCardTime.textContent = 'Заезд после ' + places[0].offer.checkin + ', выезд до ' + places[0].offer.checkout;
+  mapCardFeatures.textContent = mapCardFeaturesCycle();
+  mapCardDescription.textContent = places[0].offer.description;
+  mapCardCreatePhotos();
+  mapCardAvatar.src = places[0].author.avatar;
+  renderCard();
 }
 
 initCard();
