@@ -51,54 +51,51 @@ var GAP_X = 25;
 var GAP_Y = 70;
 var IMG_WIDTH = 40;
 var IMG_HEIGHT = 40;
+var X_MIN = 300;
+var X_MAX = 900;
+var Y_MIN = 150;
+var Y_MAX = 500;
+var PRICE_MIN = 1000;
+var PRICE_MAX = 1000000;
+var ROOMS_MIN = 1;
+var ROOMS_MAX = 5;
+var GUESTS_MIN = 1;
+var GUESTS_MAX = 6;
 
-var randomNumbers = function (min, max) {
+var generateRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 var avatarsCopy = AVATARS.slice();
 var titlesCopy = TITLES.slice();
 
-var randomAvatar = function () {
-  var firstEl = avatarsCopy[0];
-  avatarsCopy.splice(0, 1);
-  return firstEl;
+var getAvatar = function () {
+  return avatarsCopy.shift();
 };
 
-var randomTitle = function () {
-  var firstEl = titlesCopy[0];
-  titlesCopy.splice(0, 1);
-  return firstEl;
+var getTitle = function () {
+  return titlesCopy.shift();
 };
 
-var randomLocationX = function () {
-  return Math.round(randomNumbers(300, 900) / 10) * 10;
+var getRandomLocation = function (min, max) {
+  return Math.round(generateRandomNumber(min, max) / 10) * 10;
 };
 
-var randomLocationY = function () {
-  return Math.round(randomNumbers(150, 500) / 10) * 10;
-};
-
-var randomType = function () {
-  var randomTypeX = randomNumbers(0, Object.keys(TYPES).length - 1);
+var getRandomType = function () {
+  var randomTypeX = generateRandomNumber(0, Object.keys(TYPES).length - 1);
   return Object.keys(TYPES)[randomTypeX];
 };
 
-var randomCheckin = function () {
-  var randomCheckinX = randomNumbers(0, CHECKINS.length - 1);
-  return CHECKINS[randomCheckinX];
+var getRandomCheckInOut = function (arr) {
+  var randomCheck = generateRandomNumber(0, arr.length - 1);
+  return arr[randomCheck];
 };
 
-var randomCheckout = function () {
-  var randomCheckoutX = randomNumbers(0, CHECKOUTS.length - 1);
-  return CHECKOUTS[randomCheckoutX];
-};
-
-var randomFeatures = function () {
+var getRandomFeatures = function () {
   var randomFeaturesX = [];
   var featuresCopy = FEATURES.slice();
-  for (var i = 0; i < randomNumbers(1, FEATURES.length); i++) {
-    var rndElemIndex = randomNumbers(0, featuresCopy.length - 1);
+  for (var i = 0; i < generateRandomNumber(1, FEATURES.length); i++) {
+    var rndElemIndex = generateRandomNumber(0, featuresCopy.length - 1);
     var feature = featuresCopy[rndElemIndex];
     featuresCopy.splice(rndElemIndex, 1);
     randomFeaturesX.splice(0, 0, feature);
@@ -106,11 +103,11 @@ var randomFeatures = function () {
   return randomFeaturesX;
 };
 
-var randomPhotos = function () {
+var getRandomPhotos = function () {
   var randomPhotosX = [];
   var photosCopy = PHOTOS.slice();
   for (var i = 0; i < PHOTOS.length; i++) {
-    var rndElemIndex = randomNumbers(0, photosCopy.length - 1);
+    var rndElemIndex = generateRandomNumber(0, photosCopy.length - 1);
     var photo = photosCopy[rndElemIndex];
     photosCopy.splice(rndElemIndex, 1);
     randomPhotosX.splice(0, 0, photo);
@@ -118,25 +115,25 @@ var randomPhotos = function () {
   return randomPhotosX;
 };
 
-var randomPlace = function () {
-  var x = randomLocationX();
-  var y = randomLocationY();
+var getRandomPlace = function () {
+  var x = getRandomLocation(X_MIN, X_MAX);
+  var y = getRandomLocation(Y_MIN, Y_MAX);
   return {
     author: {
-      avatar: randomAvatar()
+      avatar: getAvatar()
     },
     offer: {
-      title: randomTitle(),
+      title: getTitle(),
       address: x + ', ' + y,
-      price: Math.round(randomNumbers(1000, 1000000) / 100) * 100,
-      type: randomType(),
-      rooms: randomNumbers(1, 5),
-      guests: randomNumbers(1, 6),
-      checkin: randomCheckin(),
-      checkout: randomCheckout(),
-      features: randomFeatures(),
+      price: Math.round(generateRandomNumber(PRICE_MIN, PRICE_MAX) / 100) * 100,
+      type: getRandomType(),
+      rooms: generateRandomNumber(ROOMS_MIN, ROOMS_MAX),
+      guests: generateRandomNumber(GUESTS_MIN, GUESTS_MAX),
+      checkin: getRandomCheckInOut(CHECKINS),
+      checkout: getRandomCheckInOut(CHECKOUTS),
+      features: getRandomFeatures(),
       description: 'Здесь должен быть какой-то description',
-      photos: randomPhotos()
+      photos: getRandomPhotos()
     },
     location: {
       x: x,
@@ -147,14 +144,14 @@ var randomPlace = function () {
 
 var initPlaces = function () {
   for (var i = 0; i < 8; i++) {
-    places[i] = randomPlace();
+    places[i] = getRandomPlace();
   }
 };
 
 var mapPins = document.querySelector('.map__pins');
 
 var renderPlaces = function () {
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < places.length; i++) {
     var pin = document.createElement('button');
     var img = document.createElement('img');
     pin.type = 'button';
@@ -182,12 +179,12 @@ var mapCardTemplate = document.querySelector('template').content;
 var mapCardPhotos = mapCardTemplate.querySelector('.popup__photos');
 var mapCardPhoto = mapCardTemplate.querySelector('.popup__photo');
 
-var mapCardChooseType = function () {
-  return TYPES[places[0].offer.type];
+var mapCardChooseType = function (elem) {
+  return TYPES[elem];
 };
 
 var mapCardCreatePhotos = function () {
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < PHOTOS.length; i++) {
     var mapCardPhotoX = mapCardPhoto.cloneNode(true);
     mapCardPhotos.appendChild(mapCardPhotoX);
     mapCardPhotoX.src = places[0].offer.photos[i];
@@ -213,7 +210,7 @@ var initCard = function () {
   mapCardTemplate.querySelector('.popup__title').textContent = places[0].offer.title;
   mapCardTemplate.querySelector('.popup__text--address').textContent = places[0].offer.address;
   mapCardTemplate.querySelector('.popup__text--price').textContent = places[0].offer.price + '₽/ночь';
-  mapCardTemplate.querySelector('.popup__type').textContent = mapCardChooseType();
+  mapCardTemplate.querySelector('.popup__type').textContent = mapCardChooseType(places[0].offer.type);
   mapCardTemplate.querySelector('.popup__text--capacity').textContent = places[0].offer.rooms + ' комнат для ' + places[0].offer.guests + ' гостей';
   mapCardTemplate.querySelector('.popup__text--time').textContent = 'Заезд после ' + places[0].offer.checkin + ', выезд до ' + places[0].offer.checkout;
   mapCardTemplate.querySelector('.popup__features').textContent = mapCardFeaturesCycle();
