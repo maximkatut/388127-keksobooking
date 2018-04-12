@@ -61,6 +61,8 @@ var ROOMS_MIN = 1;
 var ROOMS_MAX = 5;
 var GUESTS_MIN = 1;
 var GUESTS_MAX = 6;
+var MAIN_PIN_GAP_X = 32;
+var MAIN_PIN_GAP_Y = 84;
 
 var generateRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -146,6 +148,7 @@ var initPlaces = function () {
   for (var i = 0; i < 8; i++) {
     places[i] = getRandomPlace();
   }
+  renderPlaces();
 };
 
 var mapPins = document.querySelector('.map__pins');
@@ -167,11 +170,9 @@ var renderPlaces = function () {
 
     mapPins.appendChild(pin);
     pin.appendChild(img);
+
   }
 };
-
-initPlaces();
-renderPlaces();
 
 var map = document.querySelector('.map');
 var cardSibling = document.querySelector('.map__filters-container');
@@ -206,18 +207,82 @@ var renderCard = function () {
   map.insertBefore(cardElement, cardSibling);
 };
 
-var initCard = function () {
-  mapCardTemplate.querySelector('.popup__title').textContent = places[0].offer.title;
-  mapCardTemplate.querySelector('.popup__text--address').textContent = places[0].offer.address;
-  mapCardTemplate.querySelector('.popup__text--price').textContent = places[0].offer.price + '₽/ночь';
-  mapCardTemplate.querySelector('.popup__type').textContent = mapCardChooseType(places[0].offer.type);
-  mapCardTemplate.querySelector('.popup__text--capacity').textContent = places[0].offer.rooms + ' комнат для ' + places[0].offer.guests + ' гостей';
-  mapCardTemplate.querySelector('.popup__text--time').textContent = 'Заезд после ' + places[0].offer.checkin + ', выезд до ' + places[0].offer.checkout;
+var initCard = function (i) {
+  mapCardTemplate.querySelector('.popup__title').textContent = places[i].offer.title;
+  mapCardTemplate.querySelector('.popup__text--address').textContent = places[i].offer.address;
+  mapCardTemplate.querySelector('.popup__text--price').textContent = places[i].offer.price + '₽/ночь';
+  mapCardTemplate.querySelector('.popup__type').textContent = mapCardChooseType(places[i].offer.type);
+  mapCardTemplate.querySelector('.popup__text--capacity').textContent = places[i].offer.rooms + ' комнат для ' + places[i].offer.guests + ' гостей';
+  mapCardTemplate.querySelector('.popup__text--time').textContent = 'Заезд после ' + places[i].offer.checkin + ', выезд до ' + places[i].offer.checkout;
   mapCardTemplate.querySelector('.popup__features').textContent = mapCardFeaturesCycle();
-  mapCardTemplate.querySelector('.popup__description').textContent = places[0].offer.description;
+  mapCardTemplate.querySelector('.popup__description').textContent = places[i].offer.description;
   mapCardCreatePhotos();
-  mapCardTemplate.querySelector('.popup__avatar').src = places[0].author.avatar;
+  mapCardTemplate.querySelector('.popup__avatar').src = places[i].author.avatar;
   renderCard();
 };
 
-initCard();
+// Делаем неактивными формы добавления объявления
+var adFormFieldsets = document.querySelectorAll('.ad-form fieldset');
+var adForm = document.querySelector('.ad-form');
+
+var setFieldsetsDisabled = function () {
+  for (var i = 0; i < adFormFieldsets.length; i++) {
+    adFormFieldsets[i].setAttribute('disabled', '');
+  }
+};
+var setFieldsetsEnabled = function () {
+  for (var i = 0; i < adFormFieldsets.length; i++) {
+    adFormFieldsets[i].removeAttribute('disabled');
+  }
+};
+
+setFieldsetsDisabled();
+
+// При отпускании пина активаируются формы и инициализируются пины на карте.
+// Выключает повторное выполнение события на mainPin
+var dropMainPin = function () {
+  adForm.classList.remove('ad-form--disabled');
+  map.classList.remove('map--faded');
+  setFieldsetsEnabled();
+  initPlaces();
+  mapMainPin.removeEventListener('mouseup', dropMainPin);
+  setEventForButtons();
+};
+
+var mapMainPin = document.querySelector('.map__pin--main');
+mapMainPin.addEventListener('mouseup', dropMainPin);
+
+// Определяем координаты mainPin с учетом размера, пин указывает на координаты острым концом
+var getMainPinX = function () {
+  return Number.parseInt(mapMainPin.style.left.split('px', 1), 10) + MAIN_PIN_GAP_X;
+};
+var getMainPinY = function () {
+  return Number.parseInt(mapMainPin.style.top.split('px', 1), 10) + MAIN_PIN_GAP_Y;
+};
+
+var mainPinX = getMainPinX();
+var mainPinY = getMainPinY();
+
+// Записваем значения координат в инпут формы
+var inputAddress = document.querySelector('#address');
+var setAddressInput = function () {
+  inputAddress.value = mainPinX + ', ' + mainPinY;
+}
+setAddressInput();
+
+// Добавляем обработчик на каждый пин
+
+var allButtons = document.querySelectorAll('.map__pin');
+
+var setEventForButtons = function () {
+  for (var i = 0; i < places.length; i++) {
+    allButtons[i].addEventListener('click', function () {
+      initCard(i);
+    });
+  };
+}
+
+
+
+
+
