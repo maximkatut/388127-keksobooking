@@ -171,7 +171,7 @@ var renderPlaces = function () {
     mapPins.appendChild(pin);
     pin.appendChild(img);
   }
-  allButtons = document.querySelectorAll('button[type="button"].map__pin');
+  allMapPinButtons = document.querySelectorAll('button[type="button"].map__pin');
 };
 
 var map = document.querySelector('.map');
@@ -180,12 +180,17 @@ var mapCardTemplate = document.querySelector('template').content;
 var mapCardArticle = mapCardTemplate.querySelector('.map__card.popup');
 var mapCardPhotos = mapCardTemplate.querySelector('.popup__photos');
 var mapCardPhoto = mapCardTemplate.querySelector('.popup__photo');
+var mapCardAllPhoto;
 
 var mapCardChooseType = function (elem) {
   return TYPES[elem];
 };
 
 var mapCardCreatePhotos = function (j) {
+  mapCardAllPhoto = mapCardTemplate.querySelectorAll('.popup__photo');
+  for (var index = 1; index < mapCardAllPhoto.length; index++) {
+    mapCardAllPhoto[index].parentNode.removeChild(mapCardAllPhoto[index]);
+  }
   mapCardPhoto.src = places[j].offer.photos[0];
   for (var i = 1; i < PHOTOS.length; i++) {
     var mapCardPhotoX = mapCardPhoto.cloneNode(true);
@@ -271,21 +276,21 @@ var mainPinY = getMainPinY();
 var inputAddress = document.querySelector('#address');
 var setAddressInput = function () {
   inputAddress.value = mainPinX + ', ' + mainPinY;
-}
+};
 setAddressInput();
 
 // Добавляем обработчик события на каждый пин
 
-var allButtons;
+var allMapPinButtons;
 
 var setEventForButtons = function () {
   for (var i = 0; i < places.length; i++) {
-    (function(i) {
-      allButtons[i].addEventListener('click', function () {
-        initCard(i);
+    (function (j) {
+      allMapPinButtons[j].addEventListener('click', function () {
+        initCard(j);
       });
     }(i));
-  };
+  }
 };
 
 // Удаляем карточку
@@ -296,3 +301,6 @@ var deleteMapCard = function () {
     mapCard.parentNode.removeChild(mapCard);
   }
 };
+
+
+
