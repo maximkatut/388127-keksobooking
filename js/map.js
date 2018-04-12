@@ -301,6 +301,3 @@ var deleteMapCard = function () {
     mapCard.parentNode.removeChild(mapCard);
   }
 };
-
-
-
