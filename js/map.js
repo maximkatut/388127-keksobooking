@@ -27,12 +27,11 @@ var TYPES = {
   house: 'Дом',
   palace: 'Палац'
 };
-var CHECKINS = [
+var CHECK_TIMES = [
   '12:00',
   '13:00',
   '14:00'
 ];
-var CHECKOUTS = CHECKINS;
 var FEATURES = [
   'wifi',
   'dishwasher',
@@ -131,8 +130,8 @@ var getRandomPlace = function () {
       type: getRandomType(),
       rooms: generateRandomNumber(ROOMS_MIN, ROOMS_MAX),
       guests: generateRandomNumber(GUESTS_MIN, GUESTS_MAX),
-      checkin: getRandomCheckInOut(CHECKINS),
-      checkout: getRandomCheckInOut(CHECKOUTS),
+      checkin: getRandomCheckInOut(CHECK_TIMES),
+      checkout: getRandomCheckInOut(CHECK_TIMES),
       features: getRandomFeatures(),
       description: 'Здесь должен быть какой-то description',
       photos: getRandomPhotos()
@@ -161,6 +160,7 @@ var renderPlaces = function () {
     pin.classList.add('map__pin');
     pin.style.left = places[i].location.x - GAP_X + 'px';
     pin.style.top = places[i].location.y - GAP_Y + 'px';
+    pin.setAttribute('data-index', i);
 
     img.src = places[i].author.avatar;
     img.width = IMG_WIDTH;
@@ -234,25 +234,20 @@ var initCard = function (i) {
 var adFormFieldsets = document.querySelectorAll('.ad-form fieldset');
 var adForm = document.querySelector('.ad-form');
 
-var setFieldsetsDisabled = function () {
+var setFieldsetsTrigger = function (boo) {
   for (var i = 0; i < adFormFieldsets.length; i++) {
-    adFormFieldsets[i].setAttribute('disabled', '');
-  }
-};
-var setFieldsetsEnabled = function () {
-  for (var i = 0; i < adFormFieldsets.length; i++) {
-    adFormFieldsets[i].removeAttribute('disabled');
+    adFormFieldsets[i].disabled = boo;
   }
 };
 
-setFieldsetsDisabled();
+setFieldsetsTrigger(true);
 
 // При отпускании пина активаируются формы и инициализируются пины на карте.
 // Выключает повторное выполнение события на mainPin
 var dropMainPin = function () {
   adForm.classList.remove('ad-form--disabled');
   map.classList.remove('map--faded');
-  setFieldsetsEnabled();
+  setFieldsetsTrigger(false);
   initPlaces();
   mapMainPin.removeEventListener('mouseup', dropMainPin);
   setEventForButtons();
@@ -260,24 +255,18 @@ var dropMainPin = function () {
 
 var mapMainPin = document.querySelector('.map__pin--main');
 mapMainPin.addEventListener('mouseup', dropMainPin);
+var mapMainPinX = mapMainPin.style.left;
+var mapMainPinY = mapMainPin.style.top;
 
 // Определяем координаты mainPin с учетом размера, пин указывает на координаты острым концом
-var getMainPinX = function () {
-  return Number.parseInt(mapMainPin.style.left.split('px', 1), 10) + MAIN_PIN_GAP_X;
-};
-var getMainPinY = function () {
-  return Number.parseInt(mapMainPin.style.top.split('px', 1), 10) + MAIN_PIN_GAP_Y;
+var getMainPinXY = function (pos, gap) {
+  return Number.parseInt(pos.split('px', 1), 10) + gap;
 };
 
-var mainPinX = getMainPinX();
-var mainPinY = getMainPinY();
-
-// Записваем значения координат в инпут формы
+// Записываем значения координат в инпут формы
 var inputAddress = document.querySelector('#address');
-var setAddressInput = function () {
-  inputAddress.value = mainPinX + ', ' + mainPinY;
-};
-setAddressInput();
+inputAddress.value = getMainPinXY(mapMainPinX, MAIN_PIN_GAP_X) + ', ' + getMainPinXY(mapMainPinY, MAIN_PIN_GAP_Y);
+
 
 // Добавляем обработчик события на каждый пин
 
@@ -285,11 +274,14 @@ var allMapPinButtons;
 
 var setEventForButtons = function () {
   for (var i = 0; i < places.length; i++) {
-    (function (j) {
-      allMapPinButtons[j].addEventListener('click', function () {
-        initCard(j);
-      });
-    }(i));
+    allMapPinButtons[i].addEventListener('click', function (e) {
+      var target = e.target;
+      if (target.tagName === 'IMG') {
+        target = target.parentNode;
+      }
+      var index = target.getAttribute('data-index');
+      initCard(index);
+    });
   }
 };
 
