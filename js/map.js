@@ -68,6 +68,10 @@ var GUESTS_MIN = 1;
 var GUESTS_MAX = 6;
 var MAIN_PIN_GAP_X = 32;
 var MAIN_PIN_GAP_Y = 84;
+var LIMIT_TOP_Y = 150;
+var LIMIT_BOTTOM_Y = 500;
+var LIMIT_LEFT_X = 0;
+var LIMIT_RIGHT_X = 1200;
 
 var generateRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -248,21 +252,74 @@ var setFieldsetsTrigger = function (boo) {
 
 setFieldsetsTrigger(true);
 
-// При отпускании пина активаируются формы и инициализируются пины на карте.
-// Выключает повторное выполнение события на mainPin
-var dropMainPin = function () {
-  adForm.classList.remove('ad-form--disabled');
-  map.classList.remove('map--faded');
-  setFieldsetsTrigger(false);
-  initPlaces();
-  mapMainPin.removeEventListener('mouseup', dropMainPin);
-  setEventForButtons();
-};
-
+// Добавляем обработчик на главный пин, который можно перетаскивать по карте
 var mapMainPin = document.querySelector('.map__pin--main');
-mapMainPin.addEventListener('mouseup', dropMainPin);
-var mapMainPinX = mapMainPin.style.left;
-var mapMainPinY = mapMainPin.style.top;
+
+mapMainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  if (map.classList.contains('map--faded')) {
+    adForm.classList.remove('ad-form--disabled');
+    map.classList.remove('map--faded');
+    setFieldsetsTrigger(false);
+    initPlaces();
+    setEventForButtons();
+  }
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    mapMainPin.style.left = (mapMainPin.offsetLeft - shift.x) + 'px';
+    mapMainPin.style.top = (mapMainPin.offsetTop - shift.y) + 'px';
+
+    setCoordsToInput();
+
+    var mapMainPinLeftCoord = parseInt(mapMainPin.style.left.split('px')[0], 10);
+    var mapMainPinTopCoord = parseInt(mapMainPin.style.top.split('px')[0], 10);
+
+    if (mapMainPinTopCoord < LIMIT_TOP_Y - MAIN_PIN_GAP_Y) {
+      mapMainPin.style.top = LIMIT_TOP_Y - MAIN_PIN_GAP_Y + 'px';
+    }
+
+    if (mapMainPinTopCoord > LIMIT_BOTTOM_Y - MAIN_PIN_GAP_Y) {
+      mapMainPin.style.top = LIMIT_BOTTOM_Y - MAIN_PIN_GAP_Y + 'px';
+    }
+
+    if (mapMainPinLeftCoord < LIMIT_LEFT_X - MAIN_PIN_GAP_X) {
+      mapMainPin.style.left = LIMIT_LEFT_X - MAIN_PIN_GAP_X + 'px';
+    }
+
+    if (mapMainPinLeftCoord > LIMIT_RIGHT_X - MAIN_PIN_GAP_X) {
+      mapMainPin.style.left = LIMIT_RIGHT_X - MAIN_PIN_GAP_X + 'px';
+    }
+
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
 
 // Определяем координаты mainPin с учетом размера, пин указывает на координаты острым концом
 var getMainPinXY = function (pos, gap) {
@@ -271,8 +328,11 @@ var getMainPinXY = function (pos, gap) {
 
 // Записываем значения координат в инпут формы
 var inputAddress = document.querySelector('#address');
-inputAddress.value = getMainPinXY(mapMainPinX, MAIN_PIN_GAP_X) + ', ' + getMainPinXY(mapMainPinY, MAIN_PIN_GAP_Y);
-
+var setCoordsToInput = function () {
+  inputAddress.value = getMainPinXY(mapMainPin.style.left, MAIN_PIN_GAP_X) + ', ' +
+                       getMainPinXY(mapMainPin.style.top, MAIN_PIN_GAP_Y);
+};
+setCoordsToInput();
 
 // Добавляем обработчик события на каждый пин
 
