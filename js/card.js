@@ -27,10 +27,11 @@
   };
 
   var mapCardFeaturesCycle = function (j) {
+    var offer = window.pins.places[j].offer;
     var mapCardFeaturesString = '';
-    for (var i = 0; i < window.pins.places[j].offer.features.length; i++) {
-      mapCardFeaturesString += window.pins.places[j].offer.features[i];
-      mapCardFeaturesString += (i < window.pins.places[j].offer.features.length - 1) ? ', ' : '';
+    for (var i = 0; i < offer.features.length; i++) {
+      mapCardFeaturesString += offer.features[i];
+      mapCardFeaturesString += (i < offer.features.length - 1) ? ', ' : '';
     }
     return mapCardFeaturesString;
   };
@@ -42,16 +43,18 @@
 
   var initCard = function (i) {
     deleteMapCard();
-    mapCardTemplate.querySelector('.popup__title').textContent = window.pins.places[i].offer.title;
-    mapCardTemplate.querySelector('.popup__text--address').textContent = window.pins.places[i].offer.address;
-    mapCardTemplate.querySelector('.popup__text--price').textContent = window.pins.places[i].offer.price + '₽/ночь';
-    mapCardTemplate.querySelector('.popup__type').textContent = mapCardChooseType(window.pins.places[i].offer.type);
-    mapCardTemplate.querySelector('.popup__text--capacity').textContent = window.pins.places[i].offer.rooms + ' комнат для ' + window.pins.places[i].offer.guests + ' гостей';
-    mapCardTemplate.querySelector('.popup__text--time').textContent = 'Заезд после ' + window.pins.places[i].offer.checkin + ', выезд до ' + window.pins.places[i].offer.checkout;
+    var offer = window.pins.places[i].offer;
+    var author = window.pins.places[i].author;
+    mapCardTemplate.querySelector('.popup__title').textContent = offer.title;
+    mapCardTemplate.querySelector('.popup__text--address').textContent = offer.address;
+    mapCardTemplate.querySelector('.popup__text--price').textContent = offer.price + '₽/ночь';
+    mapCardTemplate.querySelector('.popup__type').textContent = mapCardChooseType(offer.type);
+    mapCardTemplate.querySelector('.popup__text--capacity').textContent = offer.rooms + ' комнат для ' + offer.guests + ' гостей';
+    mapCardTemplate.querySelector('.popup__text--time').textContent = 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout;
     mapCardTemplate.querySelector('.popup__features').textContent = mapCardFeaturesCycle(i);
-    mapCardTemplate.querySelector('.popup__description').textContent = window.pins.places[i].offer.description;
+    mapCardTemplate.querySelector('.popup__description').textContent = offer.description;
     mapCardCreatePhotos(i);
-    mapCardTemplate.querySelector('.popup__avatar').src = window.pins.places[i].author.avatar;
+    mapCardTemplate.querySelector('.popup__avatar').src = author.avatar;
     renderCard();
     var mapCardClose = document.querySelector('.map__card .popup__close');
     mapCardClose.addEventListener('click', deleteMapCard);
