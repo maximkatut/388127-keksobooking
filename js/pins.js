@@ -40,7 +40,7 @@
   var allMapPinButtons;
 
   var setEventForButtons = function () {
-    for (var i = 0; i < places.length; i++) {
+    for (var i = 0; i < window.places.length; i++) {
       allMapPinButtons[i].addEventListener('click', function (e) {
         var target = e.target;
         if (target.tagName === 'IMG') {

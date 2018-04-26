@@ -14,7 +14,7 @@
     for (var index = 0; index < mapCardAllPhoto.length; index++) {
       mapCardAllPhoto[index].remove();
     }
-    if (places[j].offer.photos.length !== 0) {
+    if (window.places[j].offer.photos.length !== 0) {
       for (var i = 0; i < window.places[j].offer.photos.length; i++) {
         var mapCardPhotoX = mapCardPhoto.cloneNode(true);
         mapCardPhotoX.src = window.places[j].offer.photos[i];
