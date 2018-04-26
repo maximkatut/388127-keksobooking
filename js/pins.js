@@ -5,19 +5,15 @@
   var GAP_Y = 70;
   var IMG_WIDTH = 40;
   var IMG_HEIGHT = 40;
-  var places = [];
 
   // Инициализируем пины(массив пинов)
   var initPlaces = function () {
-    for (var i = 0; i < 8; i++) {
-      places[i] = window.data.getRandomPlace();
-    }
-    renderPlaces();
+    renderPlaces(window.places);
   };
 
   var mapPins = document.querySelector('.map__pins');
 
-  var renderPlaces = function () {
+  var renderPlaces = function (places) {
     for (var i = 0; i < places.length; i++) {
       var pin = document.createElement('button');
       var img = document.createElement('img');
@@ -44,7 +40,7 @@
   var allMapPinButtons;
 
   var setEventForButtons = function () {
-    for (var i = 0; i < places.length; i++) {
+    for (var i = 0; i < window.places.length; i++) {
       allMapPinButtons[i].addEventListener('click', function (e) {
         var target = e.target;
         if (target.tagName === 'IMG') {
@@ -56,9 +52,21 @@
     }
   };
 
+  var successHandler = function (places) {
+    window.places = places;
+  };
+
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.classList.add('error');
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  window.backend.load(successHandler, errorHandler);
+
   window.pins = {
     initPlaces: initPlaces,
-    places: places,
     setEventForButtons: setEventForButtons
   };
 })();

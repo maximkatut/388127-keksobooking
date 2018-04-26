@@ -59,6 +59,21 @@
   display: none;
 }
 
+.error {
+  position: fixed;
+  left: calc(50% - 250px);
+  top: 20px;
+  width: 500px;
+  height: 200px;
+  padding-top: 80px;
+  z-index: 200;
+  text-align: center;
+  background-color: rgba(100, 100, 100, 0.7);
+  color: tomato;
+  font-size: 30px;
+  border-radius: 10px;
+}
+
 body {
   max-width: 1200px;
   margin: 0 auto;

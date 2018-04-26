@@ -26,13 +26,17 @@
   var inputAdType = document.querySelector('#type');
   var inputAdPrice = document.querySelector('#price');
 
-  inputAdType.addEventListener('change', function () {
+  var setInputPrice = function () {
     for (var i = 0; i < MAX_PRICES.length; i++) {
       if (inputAdType.selectedIndex === i) {
         inputAdPrice.placeholder = MAX_PRICES[i];
         inputAdPrice.min = MAX_PRICES[i];
       }
     }
+  };
+
+  inputAdType.addEventListener('change', function () {
+    setInputPrice();
   });
 
   var inputAdTimein = document.querySelector('#timein');
@@ -79,6 +83,15 @@
                          getMainPinXY(mapMainPin.style.top, MAIN_PIN_GAP_Y);
   };
   setCoordsToInput();
+
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(adForm), function () {
+      adForm.reset();
+      setCoordsToInput();
+      setInputPrice();
+    });
+    evt.preventDefault();
+  });
 
   window.form = {
     adForm: adForm,
