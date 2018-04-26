@@ -26,7 +26,7 @@
   var inputAdType = document.querySelector('#type');
   var inputAdPrice = document.querySelector('#price');
 
-  var getInputPrice = function () {
+  var setInputPrice = function () {
     for (var i = 0; i < MAX_PRICES.length; i++) {
       if (inputAdType.selectedIndex === i) {
         inputAdPrice.placeholder = MAX_PRICES[i];
@@ -36,7 +36,7 @@
   };
 
   inputAdType.addEventListener('change', function () {
-    getInputPrice();
+    setInputPrice();
   });
 
   var inputAdTimein = document.querySelector('#timein');
@@ -88,7 +88,7 @@
     window.backend.save(new FormData(adForm), function () {
       adForm.reset();
       setCoordsToInput();
-      getInputPrice();
+      setInputPrice();
     });
     evt.preventDefault();
   });
