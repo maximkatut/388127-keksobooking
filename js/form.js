@@ -80,6 +80,13 @@
   };
   setCoordsToInput();
 
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(form), function () {
+      console.log('blabla');
+    });
+    evt.preventDefault();
+  });
+
   window.form = {
     adForm: adForm,
     setFieldsetsTrigger: setFieldsetsTrigger,
