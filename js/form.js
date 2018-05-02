@@ -87,10 +87,40 @@
   adForm.addEventListener('submit', function (evt) {
     window.backend.save(new FormData(adForm), function () {
       adForm.reset();
-      setCoordsToInput();
-      setInputPrice();
+      resetAdForm();
+      setMessageSuccess();
     });
     evt.preventDefault();
+  });
+
+  var setMessageSuccess = function () {
+    var messageSuccess = document.querySelector('.success');
+    messageSuccess.classList.remove('hidden');
+    messageSuccess.addEventListener('click', function () {
+      messageSuccess.classList.add('hidden');
+    });
+  };
+
+  // Сброс формы
+  var resetAdForm = function () {
+    setFieldsetsTrigger(true);
+    adForm.classList.add('ad-form--disabled');
+    window.card.map.classList.add('map--faded');
+    var allPins = document.querySelectorAll('button[type="button"].map__pin');
+    for (var i = 0; i < allPins.length; i++) {
+      allPins[i].remove();
+    }
+    mapMainPin.style.left = '570px';
+    mapMainPin.style.top = '375px';
+    setCoordsToInput();
+    window.card.deleteMapCard();
+  };
+
+  var adFormResetButton = document.querySelector('.ad-form__reset');
+  adFormResetButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    adForm.reset();
+    resetAdForm();
   });
 
   window.form = {

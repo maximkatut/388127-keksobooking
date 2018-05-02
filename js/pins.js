@@ -61,6 +61,9 @@
     node.classList.add('error');
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
+    setTimeout(function () {
+      node.remove();
+    }, 5000);
   };
 
   window.backend.load(successHandler, errorHandler);

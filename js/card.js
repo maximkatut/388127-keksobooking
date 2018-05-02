@@ -68,6 +68,7 @@
 
   window.card = {
     map: map,
-    initCard: initCard
+    initCard: initCard,
+    deleteMapCard: deleteMapCard
   };
 })();
