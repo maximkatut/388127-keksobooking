@@ -106,10 +106,7 @@
     setFieldsetsTrigger(true);
     adForm.classList.add('ad-form--disabled');
     window.card.map.classList.add('map--faded');
-    var allPins = document.querySelectorAll('button[type="button"].map__pin');
-    for (var i = 0; i < allPins.length; i++) {
-      allPins[i].remove();
-    }
+    window.pins.deleteAllPins();
     mapMainPin.style.left = '570px';
     mapMainPin.style.top = '375px';
     setCoordsToInput();

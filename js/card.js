@@ -38,10 +38,10 @@
     map.insertBefore(cardElement, cardSibling);
   };
 
-  var initCard = function (i) {
+  var initCard = function (i, arr) {
     deleteMapCard();
-    var offer = window.places[i].offer;
-    var author = window.places[i].author;
+    var offer = arr[i].offer;
+    var author = arr[i].author;
     mapCardTemplate.querySelector('.popup__title').textContent = offer.title;
     mapCardTemplate.querySelector('.popup__text--address').textContent = offer.address;
     mapCardTemplate.querySelector('.popup__text--price').textContent = offer.price + '₽/ночь';
@@ -55,6 +55,7 @@
     renderCard();
     var mapCardClose = document.querySelector('.map__card .popup__close');
     mapCardClose.addEventListener('click', deleteMapCard);
+    document.addEventListener('keydown', window.util.onPopupEscPress);
   };
 
   // Удаляем карточку
@@ -63,6 +64,7 @@
     var mapCard = document.querySelector('.map__card');
     if (mapCard) {
       mapCard.parentNode.removeChild(mapCard);
+      document.removeEventListener('keydown', window.util.onPopupEscPress);
     }
   };
 

@@ -15,7 +15,8 @@
       window.card.map.classList.remove('map--faded');
       window.form.setFieldsetsTrigger(false);
       window.pins.initPlaces();
-      window.pins.setEventForButtons();
+      window.pins.setEventForButtons(window.places);
+      window.pins.getAllFilters();
     }
 
     var startCoords = {

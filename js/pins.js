@@ -5,6 +5,7 @@
   var GAP_Y = 70;
   var IMG_WIDTH = 40;
   var IMG_HEIGHT = 40;
+  var REMOVE_ERROR_TIME = 5000;
 
   // Инициализируем пины(массив пинов)
   var initPlaces = function () {
@@ -13,6 +14,7 @@
 
   var mapPins = document.querySelector('.map__pins');
 
+  // Производит добавление в ДОМ
   var renderPlaces = function (places) {
     for (var i = 0; i < places.length; i++) {
       var pin = document.createElement('button');
@@ -35,21 +37,51 @@
     allMapPinButtons = document.querySelectorAll('button[type="button"].map__pin');
   };
 
-  // Добавляем обработчик события на каждый пин
+
+  // Удаляет все пины
+
+  var deleteAllPins = function () {
+    var allPins = document.querySelectorAll('button[type="button"].map__pin');
+    for (var i = 0; i < allPins.length; i++) {
+      allPins[i].remove();
+    }
+  };
+
+  // Добавляет обработчик события на каждый пин
 
   var allMapPinButtons;
 
-  var setEventForButtons = function () {
-    for (var i = 0; i < window.places.length; i++) {
+  var setEventForButtons = function (arr) {
+    for (var i = 0; i < arr.length; i++) {
       allMapPinButtons[i].addEventListener('click', function (e) {
         var target = e.target;
         if (target.tagName === 'IMG') {
           target = target.parentNode;
         }
         var index = target.getAttribute('data-index');
-        window.card.initCard(index);
+        window.card.initCard(index, arr);
       });
     }
+  };
+
+  // Находит все инпуты в форме фильтрации
+  var getAllFilters = function () {
+    var allFilters = document.querySelectorAll('.map__filters');
+    for (var i = 0; i < allFilters.length; i++) {
+      allFilters[i].addEventListener('change', function() {
+        updatePlaces();
+      });
+    }
+  }
+
+  // Перерисовывает пины на карте с учетом фильтрации
+
+  var updatePlaces = function (places) {
+    deleteAllPins();
+    var newPlaces = window.compare.getNewPlaces();
+    renderPlaces(newPlaces);
+    setEventForButtons(newPlaces);
+    window.card.deleteMapCard();
   };
 
   var successHandler = function (places) {
@@ -63,13 +95,14 @@
     document.body.insertAdjacentElement('afterbegin', node);
     setTimeout(function () {
       node.remove();
-    }, 5000);
+    }, REMOVE_ERROR_TIME);
   };
 
   window.backend.load(successHandler, errorHandler);
-
   window.pins = {
     initPlaces: initPlaces,
-    setEventForButtons: setEventForButtons
+    setEventForButtons: setEventForButtons,
+    getAllFilters: getAllFilters,
+    deleteAllPins: deleteAllPins
   };
 })();
