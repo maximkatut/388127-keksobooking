@@ -15,7 +15,7 @@
       window.card.map.classList.remove('map--faded');
       window.form.setFieldsetsTrigger(false);
       window.pins.initPlaces();
-      window.pins.setEventForButtons(window.places);
+      window.pins.setEventForButtons(window.places.slice(0, window.pins.MAX_OF_ELEM));
       window.pins.getAllFilters();
     }
 

@@ -6,10 +6,11 @@
   var IMG_WIDTH = 40;
   var IMG_HEIGHT = 40;
   var REMOVE_ERROR_TIME = 5000;
+  var MAX_OF_ELEM = 5;
 
   // Инициализируем пины(массив пинов)
   var initPlaces = function () {
-    renderPlaces(window.places);
+    renderPlaces(window.places.slice(0, MAX_OF_ELEM));
   };
 
   var mapPins = document.querySelector('.map__pins');
@@ -68,17 +69,17 @@
   var getAllFilters = function () {
     var allFilters = document.querySelectorAll('.map__filters');
     for (var i = 0; i < allFilters.length; i++) {
-      allFilters[i].addEventListener('change', function() {
-        updatePlaces();
+      allFilters[i].addEventListener('change', function (evt) {
+        window.util.debounce(updatePlaces(evt));
       });
     }
-  }
+  };
 
   // Перерисовывает пины на карте с учетом фильтрации
 
-  var updatePlaces = function (places) {
+  var updatePlaces = function (evt) {
     deleteAllPins();
-    var newPlaces = window.compare.getNewPlaces();
+    var newPlaces = window.compare.getNewPlaces(evt, MAX_OF_ELEM);
     renderPlaces(newPlaces);
     setEventForButtons(newPlaces);
     window.card.deleteMapCard();
@@ -103,6 +104,7 @@
     initPlaces: initPlaces,
     setEventForButtons: setEventForButtons,
     getAllFilters: getAllFilters,
-    deleteAllPins: deleteAllPins
+    deleteAllPins: deleteAllPins,
+    MAX_OF_ELEM: MAX_OF_ELEM
   };
 })();
