@@ -11,9 +11,6 @@ window.util = (function () {
         window.card.deleteMapCard();
       }
     },
-    getValueObject: function (obj, value) {
-      return obj[value];
-    },
     debounce: function (fun) {
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);

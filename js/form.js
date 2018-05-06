@@ -10,6 +10,7 @@
   };
   var MAIN_PIN_GAP_X = 32;
   var MAIN_PIN_GAP_Y = 84;
+
   // Делаем неактивными формы добавления объявления
   var adFormFieldsets = document.querySelectorAll('.ad-form fieldset');
   var adForm = document.querySelector('.ad-form');
@@ -88,6 +89,7 @@
     window.backend.save(new FormData(adForm), function () {
       adForm.reset();
       resetAdForm();
+      resetFilterForm();
       setMessageSuccess();
     });
     evt.preventDefault();
@@ -113,11 +115,24 @@
     window.card.deleteMapCard();
   };
 
+  var resetFilterForm = function () {
+    var mapFilters = document.querySelectorAll('.map__filter');
+    var mapCheckboxes = document.querySelectorAll('.map__checkbox');
+
+    for (var i = 0; i < mapFilters.length; i++) {
+      mapFilters[i].value = 'any';
+    }
+    for (var j = 0; j < mapCheckboxes.length; j++) {
+      mapCheckboxes[j].checked = false;
+    }
+  };
+
   var adFormResetButton = document.querySelector('.ad-form__reset');
   adFormResetButton.addEventListener('click', function (evt) {
     evt.preventDefault();
     adForm.reset();
     resetAdForm();
+    resetFilterForm();
   });
 
   window.form = {

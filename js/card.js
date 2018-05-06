@@ -8,12 +8,16 @@
   var mapCardArticle = mapCardTemplate.querySelector('.map__card.popup');
   var mapCardPhotos = mapCardTemplate.querySelector('.popup__photos');
   var mapCardPhoto = mapCardTemplate.querySelector('.popup__photo');
-  var mapCardAllPhoto;
+  var mapCardAllPhotos;
+
+  var getValueObject = function (obj, value) {
+    return obj[value];
+  };
 
   var mapCardCreatePhotos = function (j) {
-    mapCardAllPhoto = mapCardTemplate.querySelectorAll('.popup__photo');
-    for (var index = 0; index < mapCardAllPhoto.length; index++) {
-      mapCardAllPhoto[index].remove();
+    mapCardAllPhotos = mapCardTemplate.querySelectorAll('.popup__photo');
+    for (var index = 0; index < mapCardAllPhotos.length; index++) {
+      mapCardAllPhotos[index].remove();
     }
     if (window.places[j].offer.photos.length !== 0) {
       for (var i = 0; i < window.places[j].offer.photos.length; i++) {
@@ -28,13 +32,13 @@
     var features = window.places[j].offer.features;
     var lis = document.createDocumentFragment();
 
-    features.forEach(function (item) {
+    for (var i = 0; i < features.length; i++) {
       var li = document.createElement('li');
       li.className = 'popup__feature';
-      li.classList.add('popup__feature--' + item);
-      li.textContent = item;
+      li.classList.add('popup__feature--' + features[i]);
+      li.textContent = features[i];
       lis.appendChild(li);
-    });
+    }
 
     return lis;
   };
@@ -51,7 +55,7 @@
     mapCardTemplate.querySelector('.popup__title').textContent = offer.title;
     mapCardTemplate.querySelector('.popup__text--address').textContent = offer.address;
     mapCardTemplate.querySelector('.popup__text--price').textContent = offer.price + '₽/ночь';
-    mapCardTemplate.querySelector('.popup__type').textContent = window.util.getValueObject(TYPES_RUS, arr[i].offer.type);
+    mapCardTemplate.querySelector('.popup__type').textContent = getValueObject(TYPES_RUS, arr[i].offer.type);
     mapCardTemplate.querySelector('.popup__text--capacity').textContent = offer.rooms + ' комнат для ' + offer.guests + ' гостей';
     mapCardTemplate.querySelector('.popup__text--time').textContent = 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout;
     var featuresNode = mapCardTemplate.querySelector('.popup__features');
