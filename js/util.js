@@ -8,7 +8,7 @@ window.util = (function () {
   return {
     onPopupEscPress: function (evt) {
       if (evt.keyCode === ESC_KEYCODE) {
-        window.card.deleteMapCard();
+        window.card.delete();
       }
     },
     debounce: function (fun) {

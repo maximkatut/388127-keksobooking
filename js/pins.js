@@ -52,15 +52,15 @@
 
   var allMapPinButtons;
 
-  var setEventForButtons = function (arr) {
-    for (var i = 0; i < arr.length; i++) {
+  var setEventForButtons = function (places) {
+    for (var i = 0; i < places.length; i++) {
       allMapPinButtons[i].addEventListener('click', function (e) {
         var target = e.target;
         if (target.tagName === 'IMG') {
           target = target.parentNode;
         }
         var index = target.getAttribute('data-index');
-        window.card.initCard(index, arr);
+        window.card.init(index, places);
       });
     }
   };
@@ -82,7 +82,7 @@
     var newPlaces = window.compare.getNewPlaces(evt, MAX_OF_ELEM);
     renderPlaces(newPlaces);
     setEventForButtons(newPlaces);
-    window.card.deleteMapCard();
+    window.card.delete();
   };
 
   var successHandler = function (places) {
@@ -101,10 +101,10 @@
 
   window.backend.load(successHandler, errorHandler);
   window.pins = {
-    initPlaces: initPlaces,
+    init: initPlaces,
     setEventForButtons: setEventForButtons,
     getAllFilters: getAllFilters,
-    deleteAllPins: deleteAllPins,
+    delete: deleteAllPins,
     MAX_OF_ELEM: MAX_OF_ELEM
   };
 })();

@@ -10,14 +10,16 @@
   };
   var MAIN_PIN_GAP_X = 32;
   var MAIN_PIN_GAP_Y = 84;
+  var LIMIT_TOP_Y = 150;
+  var LIMIT_BOTTOM_Y = 500;
 
   // Делаем неактивными формы добавления объявления
   var adFormFieldsets = document.querySelectorAll('.ad-form fieldset');
   var adForm = document.querySelector('.ad-form');
 
-  var setFieldsetsTrigger = function (boo) {
+  var setFieldsetsTrigger = function (trigerBoolean) {
     for (var i = 0; i < adFormFieldsets.length; i++) {
-      adFormFieldsets[i].disabled = boo;
+      adFormFieldsets[i].disabled = trigerBoolean;
     }
   };
   setFieldsetsTrigger(true);
@@ -72,17 +74,24 @@
   });
 
   // Определяем координаты mainPin с учетом размера, пин указывает на координаты острым концом
-  var getMainPinXY = function (pos, gap) {
-    return Number.parseInt(pos.split('px', 1), 10) + gap;
+  var getMainPinXY = function (position, gap) {
+    return Number.parseInt(position.split('px', 1), 10) + gap;
   };
 
   // Записываем значения координат в инпут формы
   var mapMainPin = document.querySelector('.map__pin--main');
   var inputAddress = document.querySelector('#address');
   var setCoordsToInput = function () {
-    inputAddress.value = getMainPinXY(mapMainPin.style.left, MAIN_PIN_GAP_X) + ', ' +
-                         getMainPinXY(mapMainPin.style.top, MAIN_PIN_GAP_Y);
+    var xMainPin = getMainPinXY(mapMainPin.style.left, MAIN_PIN_GAP_X);
+    var yMainPin = getMainPinXY(mapMainPin.style.top, MAIN_PIN_GAP_Y);
+    if (yMainPin > LIMIT_BOTTOM_Y) {
+      yMainPin = LIMIT_BOTTOM_Y;
+    } else if (yMainPin < LIMIT_TOP_Y) {
+      yMainPin = LIMIT_TOP_Y;
+    }
+    inputAddress.value = getMainPinXY(mapMainPin.style.left, MAIN_PIN_GAP_X) + ', ' + yMainPin;
   };
+
   setCoordsToInput();
 
   adForm.addEventListener('submit', function (evt) {
@@ -108,11 +117,11 @@
     setFieldsetsTrigger(true);
     adForm.classList.add('ad-form--disabled');
     window.card.map.classList.add('map--faded');
-    window.pins.deleteAllPins();
+    window.pins.delete();
     mapMainPin.style.left = '570px';
     mapMainPin.style.top = '375px';
     setCoordsToInput();
-    window.card.deleteMapCard();
+    window.card.delete();
   };
 
   var resetFilterForm = function () {
@@ -141,6 +150,8 @@
     setCoordsToInput: setCoordsToInput,
     mapMainPin: mapMainPin,
     MAIN_PIN_GAP_X: MAIN_PIN_GAP_X,
-    MAIN_PIN_GAP_Y: MAIN_PIN_GAP_Y
+    MAIN_PIN_GAP_Y: MAIN_PIN_GAP_Y,
+    LIMIT_TOP_Y: LIMIT_TOP_Y,
+    LIMIT_BOTTOM_Y: LIMIT_BOTTOM_Y
   };
 })();

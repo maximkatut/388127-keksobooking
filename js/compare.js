@@ -25,63 +25,62 @@ window.compare = (function () {
         }
       }
 
-      var filteredHousingType = function (item, index, array) {
-        return filteredPins['housing-type'] ? filteredPins['housing-type'] === array[index].offer.type : true;
+      var filteredHousingType = function (element, index, places) {
+        return filteredPins['housing-type'] ? filteredPins['housing-type'] === places[index].offer.type : true;
       };
 
-      var filteredHousingPrice = function (item, index, array) {
+      var filteredHousingPrice = function (element, index, places) {
         var valuePrice = true;
 
         switch (filteredPins['housing-price']) {
           case 'low':
-            valuePrice = array[index].offer.price > LOW_HOUSIN_PRICE && array[index].offer.price < MID_HOUSING_PRICE;
+            valuePrice = places[index].offer.price > LOW_HOUSIN_PRICE && places[index].offer.price < MID_HOUSING_PRICE;
             break;
           case 'middle':
-            valuePrice = array[index].offer.price >= MID_HOUSING_PRICE && array[index].offer.price <= HIGH_HOUSING_PRICE;
+            valuePrice = places[index].offer.price >= MID_HOUSING_PRICE && places[index].offer.price <= HIGH_HOUSING_PRICE;
             break;
           case 'high':
-            valuePrice = array[index].offer.price > HIGH_HOUSING_PRICE;
+            valuePrice = places[index].offer.price > HIGH_HOUSING_PRICE;
             break;
         }
 
         return valuePrice;
       };
 
-      var filteredHousingRooms = function (item, index, array) {
-        return filteredPins['housing-rooms'] ? parseInt(filteredPins['housing-rooms'], 10) === array[index].offer.rooms : true;
+      var filteredHousingRooms = function (element, index, places) {
+        return filteredPins['housing-rooms'] ? parseInt(filteredPins['housing-rooms'], 10) === places[index].offer.rooms : true;
       };
 
-      var filteredHousingGuests = function (item, index, array) {
-        return filteredPins['housing-guests'] ? parseInt(filteredPins['housing-guests'], 10) === array[index].offer.guests : true;
+      var filteredHousingGuests = function (element, index, places) {
+        return filteredPins['housing-guests'] ? parseInt(filteredPins['housing-guests'], 10) === places[index].offer.guests : true;
       };
 
-      var filteredFeatures = function (item, index, array) {
+      var filteredFeatures = function (element, index, places) {
         var isfeatures;
         var counter = 0;
 
         if (filteredPins.checkboxes.length > 0) {
 
-          for (var k = 0; k < array.length; k++) {
-            for (var t = 0; t < array[index].offer.features.length; t++) {
-              if (filteredPins.checkboxes[k] === array[index].offer.features[t]) {
+          for (var k = 0; k < places.length; k++) {
+            for (var t = 0; t < places[index].offer.features.length; t++) {
+              if (filteredPins.checkboxes[k] === places[index].offer.features[t]) {
                 counter++;
               }
             }
           }
 
           if (counter === filteredPins.checkboxes.length) {
-            isfeatures = array[index];
+            isfeatures = places[index];
           }
 
         } else {
           isfeatures = true;
         }
-
         return isfeatures;
       };
 
-      var filteredAd = function (item, index, array) {
-        return filteredHousingType(item, index, array) && filteredHousingPrice(item, index, array) && filteredHousingRooms(item, index, array) && filteredHousingGuests(item, index, array) && filteredFeatures(item, index, array) ? true : false;
+      var filteredAd = function (element, index, places) {
+        return filteredHousingType(element, index, places) && filteredHousingPrice(element, index, places) && filteredHousingRooms(element, index, places) && filteredHousingGuests(element, index, places) && filteredFeatures(element, index, places) ? true : false;
       };
 
       return window.places.filter(filteredAd).slice(0, max);
