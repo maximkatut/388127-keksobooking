@@ -11,19 +11,19 @@ window.compare = (function () {
       var selects = evt.currentTarget.querySelectorAll('.map__filter');
       var checkboxes = evt.currentTarget.querySelectorAll('[name=features]');
 
-      for (var i = 0; i < selects.length; i++) {
-        if (selects[i].value !== 'any') {
-          filteredPins[selects[i].name] = selects[i].value;
+      selects.forEach(function (select) {
+        if (select.value !== 'any') {
+          filteredPins[select.name] = select.value;
         }
-      }
+      });
 
       filteredPins.checkboxes = [];
 
-      for (var j = 0; j < checkboxes.length; j++) {
-        if (checkboxes[j].checked) {
-          filteredPins.checkboxes.push(checkboxes[j].value);
+      checkboxes.forEach(function (checkbox) {
+        if (checkbox.checked) {
+          filteredPins.checkboxes.push(checkbox.value);
         }
-      }
+      });
 
       var filteredHousingType = function (element, index, places) {
         return filteredPins['housing-type'] ? filteredPins['housing-type'] === places[index].offer.type : true;
@@ -62,11 +62,11 @@ window.compare = (function () {
         if (filteredPins.checkboxes.length > 0) {
 
           for (var k = 0; k < places.length; k++) {
-            for (var t = 0; t < places[index].offer.features.length; t++) {
-              if (filteredPins.checkboxes[k] === places[index].offer.features[t]) {
+            places[index].offer.features.forEach(function (feature) {
+              if (filteredPins.checkboxes[k] === feature) {
                 counter++;
               }
-            }
+            });
           }
 
           if (counter === filteredPins.checkboxes.length) {

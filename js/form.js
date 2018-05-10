@@ -82,7 +82,6 @@
   var mapMainPin = document.querySelector('.map__pin--main');
   var inputAddress = document.querySelector('#address');
   var setCoordsToInput = function () {
-    var xMainPin = getMainPinXY(mapMainPin.style.left, MAIN_PIN_GAP_X);
     var yMainPin = getMainPinXY(mapMainPin.style.top, MAIN_PIN_GAP_Y);
     if (yMainPin > LIMIT_BOTTOM_Y) {
       yMainPin = LIMIT_BOTTOM_Y;
