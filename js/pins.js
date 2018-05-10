@@ -5,14 +5,17 @@
   var GAP_Y = 70;
   var IMG_WIDTH = 40;
   var IMG_HEIGHT = 40;
+  var REMOVE_ERROR_TIME = 5000;
+  var MAX_OF_ELEM = 5;
 
   // Инициализируем пины(массив пинов)
   var initPlaces = function () {
-    renderPlaces(window.places);
+    renderPlaces(window.places.slice(0, MAX_OF_ELEM));
   };
 
   var mapPins = document.querySelector('.map__pins');
 
+  // Производит добавление в ДОМ
   var renderPlaces = function (places) {
     for (var i = 0; i < places.length; i++) {
       var pin = document.createElement('button');
@@ -35,21 +38,51 @@
     allMapPinButtons = document.querySelectorAll('button[type="button"].map__pin');
   };
 
-  // Добавляем обработчик события на каждый пин
+
+  // Удаляет все пины
+
+  var deleteAllPins = function () {
+    var allPins = document.querySelectorAll('button[type="button"].map__pin');
+    for (var i = 0; i < allPins.length; i++) {
+      allPins[i].remove();
+    }
+  };
+
+  // Добавляет обработчик события на каждый пин
 
   var allMapPinButtons;
 
-  var setEventForButtons = function () {
-    for (var i = 0; i < window.places.length; i++) {
+  var setEventForButtons = function (places) {
+    for (var i = 0; i < places.length; i++) {
       allMapPinButtons[i].addEventListener('click', function (e) {
         var target = e.target;
         if (target.tagName === 'IMG') {
           target = target.parentNode;
         }
         var index = target.getAttribute('data-index');
-        window.card.initCard(index);
+        window.card.init(index, places);
       });
     }
+  };
+
+  // Находит все инпуты в форме фильтрации
+  var getAllFilters = function () {
+    var allFilters = document.querySelectorAll('.map__filters');
+    for (var i = 0; i < allFilters.length; i++) {
+      allFilters[i].addEventListener('change', function (evt) {
+        window.util.debounce(updatePlaces(evt));
+      });
+    }
+  };
+
+  // Перерисовывает пины на карте с учетом фильтрации
+
+  var updatePlaces = function (evt) {
+    deleteAllPins();
+    var newPlaces = window.compare.getNewPlaces(evt, MAX_OF_ELEM);
+    renderPlaces(newPlaces);
+    setEventForButtons(newPlaces);
+    window.card.delete();
   };
 
   var successHandler = function (places) {
@@ -61,12 +94,17 @@
     node.classList.add('error');
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
+    setTimeout(function () {
+      node.remove();
+    }, REMOVE_ERROR_TIME);
   };
 
   window.backend.load(successHandler, errorHandler);
-
   window.pins = {
-    initPlaces: initPlaces,
-    setEventForButtons: setEventForButtons
+    init: initPlaces,
+    setEventForButtons: setEventForButtons,
+    getAllFilters: getAllFilters,
+    delete: deleteAllPins,
+    MAX_OF_ELEM: MAX_OF_ELEM
   };
 })();
