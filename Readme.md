@@ -1,6 +1,6 @@
 # Keksobooking
 
-The sample of selection system on JS. There is an array of objects (appartment offers) on a map. Each of them contains its own attributes. You can choose what attributes are you looking for. The results will be shown on the map.
+The example of selection system on JS. There is an array of objects (appartment offers) on a map. Each of them contains its own attributes. You can choose what attributes are you looking for. The results will be shown on the map.
 
 ## Try it [here](https://maximkatut.github.io/388127-keksobooking/)
 
